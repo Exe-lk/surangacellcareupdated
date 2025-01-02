@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const stockInOutApiSlice = createApi({
   reducerPath: 'stockInOutApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://surangacellcaredev.netlify.app/api/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://suranga-cellcare-inventory.netlify.app/api/' }),
   tagTypes: ['StockInOut'],
   endpoints: (builder) => ({
     getStockInOuts: builder.query({

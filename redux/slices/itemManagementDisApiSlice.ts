@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const ItemDisApiSlice = createApi({
   reducerPath: 'ItemDisApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://surangacellcaredev.netlify.app/api/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://suranga-cellcare-inventory.netlify.app/api/' }),
   tagTypes: ['ItemDis'],
   endpoints: (builder) => ({
     getItemDiss: builder.query({

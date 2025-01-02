@@ -28,7 +28,7 @@ const PageWrapper = forwardRef<HTMLDivElement, IPageWrapperProps>(
 		}, []);
 
 		return (
-			<div ref={ref} className={classNames('page-wrapper', 'container-fluid', className)}>
+			<div ref={ref} className={classNames('page-wrapper', className)}>
 				<Mounted>{children}</Mounted>
 			</div>
 		);

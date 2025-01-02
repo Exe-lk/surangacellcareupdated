@@ -566,6 +566,7 @@ import PaginationButtons, {
 } from '../../../components/PaginationButtons';
 import FormGroup from '../../../components/bootstrap/forms/FormGroup';
 import Checks, { ChecksGroup } from '../../../components/bootstrap/forms/Checks';
+import { useGetItemDissQuery } from '../../../redux/slices/itemManagementDisApiSlice';
 
 interface Model {
 	cid: string;
@@ -583,6 +584,7 @@ const Index: NextPage = () => {
 	const [id, setId] = useState<string>(''); // State for current category ID
 	const [status, setStatus] = useState(true); // State for managing data fetching status
 	const { data: models, error, isLoading, refetch } = useGetModelsQuery(undefined);
+	const { data: itemDiss } = useGetItemDissQuery(undefined);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [perPage, setPerPage] = useState<number>(PER_COUNT['50']);
 	const [updateModel] = useUpdateModelMutation();
@@ -593,11 +595,21 @@ const Index: NextPage = () => {
 		{ brand: 'Oppo' },
 		{ brand: 'Huawei' },
 		{ brand: 'Vivo' },
-		{ brand: 'Redmi' }
-		];
+		{ brand: 'Redmi' },
+	];
 	const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
 	const handleClickDelete = async (model: any) => {
+		const isCategoryLinked = itemDiss.some((itemDis: any) => itemDis.model === model.name);
+
+		if (isCategoryLinked) {
+			Swal.fire(
+				'Error',
+				'Failed to delete model. please delete the items related to this.',
+				'error',
+			);
+			return;
+		}
 		try {
 			const result = await Swal.fire({
 				title: 'Are you sure?',

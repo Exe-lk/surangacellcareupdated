@@ -118,23 +118,23 @@
 // 		itemName: string,
 // 		selectedBarcodes:any[],
 // 		id:string
-		
+
 // 	) => {
 // 		Swal.fire({
 // 			title: 'Bar Code Print!',
-			
+
 // 			showCancelButton: true,
 // 			confirmButtonText: 'Print',
-			
+
 // 		}).then((result) => {
 // 			if (result.isConfirmed) {
 // 				// Number of barcodes to print
 // 				const labelQuantity = selectedBarcodes.length;
-			
+
 // 				// Calculating rows and remaining labels
 // 				let labelRawsQuantity = Math.floor(labelQuantity / 3);
 // 				let lastRawLabelQuantity = labelQuantity % 3;
-			
+
 // 				let zplString = `
 // 					CT~~CD,~CC^~CT~
 // 					~JA
@@ -156,12 +156,12 @@
 // 					^PA0,1,1,0
 // 					^XZ
 // 				`;
-			
+
 // 				// Loop through full rows of 3 labels
 // 				let currentIndex = 0;
 // 				for (let i = 0; i < labelRawsQuantity; i++) {
 // 					zplString += `^XA ^MMT ^PW815 ^LL200 ^LS2`;
-			
+
 // 					for (let j = 0; j < 3; j++) {
 // 						const currentBarcode = selectedBarcodes[currentIndex++];
 // 						zplString += `
@@ -174,11 +174,11 @@
 // 					}
 // 					zplString += `^PQ1,0,1,Y ^XZ`;
 // 				}
-			
+
 // 				// Handle the remaining labels for the last row
 // 				if (lastRawLabelQuantity > 0) {
 // 					zplString += `^XA ^MMT ^PW815 ^LL200 ^LS2`;
-			
+
 // 					for (let j = 0; j < lastRawLabelQuantity; j++) {
 // 						const currentBarcode = selectedBarcodes[currentIndex++];
 // 						zplString += `
@@ -189,14 +189,14 @@
 // 							^FT${43 + j * 264},170^A0N,20,20^FH\\^CI28^FDItem Code : ${itemCode}^FS^CI27
 // 						`;
 // 					}
-			
+
 // 					zplString += `^PQ1,0,1,Y ^XZ`;
 // 				}
-			
+
 // 				// Send ZPL string to the selected device
 // 				selectedDevice.send(zplString, undefined, errorCallback);
 // 			}
-			
+
 // 		});
 // 	};
 // 	var errorCallback = function (errorMessage: any) {
@@ -411,11 +411,15 @@ import PaginationButtons, {
 	dataPagination,
 	PER_COUNT,
 } from '../../../components/PaginationButtons';
-import { useGetStockInOutsQuery } from '../../../redux/slices/stockInOutDissApiSlice';
+import {
+	useGetStockInOutsQuery,
+	useUpdateSubStockInOutMutation,
+} from '../../../redux/slices/stockInOutDissApiSlice';
 import makeAnimated from 'react-select/animated';
 import { MultiSelect } from 'primereact/multiselect';
 const Index: NextPage = () => {
 	const { data: StockInOuts, error, isLoading, refetch } = useGetStockInOutsQuery(undefined);
+	const [updateSubStockInOut] = useUpdateSubStockInOutMutation();
 	const [searchTerm, setSearchTerm] = useState('');
 	const [startDate, setStartDate] = useState<string>('');
 	const [endDate, setEndDate] = useState<string>('');
@@ -510,29 +514,52 @@ const Index: NextPage = () => {
 		console.log(`Selected Barcodes for Row ${brandId}: `, e.value);
 	}
 
+	const printLabels1 = (
+		price: string,
+		itemCode: string,
+		itemName: string,
+		selectedBarcodes: any[],
+		id: string,
+	) => {
+		Swal.fire({
+			title: 'Bar Code Print!',
+
+			showCancelButton: true,
+			confirmButtonText: 'Print',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				selectedBarcodes.map(async (subid: any) => {
+					const values = {
+						print: true,
+					};
+
+					await updateSubStockInOut({ id, subid, values }).unwrap();
+				});
+			}
+		});
+	};
 	const printLabels = (
 		price: string,
 		itemCode: string,
 		itemName: string,
-		selectedBarcodes:any[],
-		id:string
-		
+		selectedBarcodes: any[],
+		id: string,
 	) => {
 		Swal.fire({
 			title: 'Bar Code Print!',
-			
+
 			showCancelButton: true,
 			confirmButtonText: 'Print',
-			
 		}).then((result) => {
 			if (result.isConfirmed) {
+				console.log(selectedBarcodes)
 				// Number of barcodes to print
 				const labelQuantity = selectedBarcodes.length;
-			
+
 				// Calculating rows and remaining labels
 				let labelRawsQuantity = Math.floor(labelQuantity / 3);
 				let lastRawLabelQuantity = labelQuantity % 3;
-			
+
 				let zplString = `
 					CT~~CD,~CC^~CT~
 					~JA
@@ -554,12 +581,12 @@ const Index: NextPage = () => {
 					^PA0,1,1,0
 					^XZ
 				`;
-			
+
 				// Loop through full rows of 3 labels
 				let currentIndex = 0;
 				for (let i = 0; i < labelRawsQuantity; i++) {
 					zplString += `^XA ^MMT ^PW815 ^LL200 ^LS2`;
-			
+
 					for (let j = 0; j < 3; j++) {
 						const currentBarcode = selectedBarcodes[currentIndex++];
 						zplString += `
@@ -567,16 +594,16 @@ const Index: NextPage = () => {
 							^BY2,3,52^FT${43 + j * 264},145^BCN,,N,N
 							^FH\\^FD>;${currentBarcode}^FS
 							^FT${43 + j * 264},58^A0N,20,20^FH\\^CI28^FD${itemName}^FS^CI27
-							^FT${43 + j * 264},170^A0N,20,20^FH\\^CI28^FDItem Code : ${itemCode}^FS^CI27
+							^FT${43 + j * 264},170^A0N,20,20^FH\\^CI28^FD ${currentBarcode}^FS^CI27
 						`;
 					}
 					zplString += `^PQ1,0,1,Y ^XZ`;
 				}
-			
+
 				// Handle the remaining labels for the last row
 				if (lastRawLabelQuantity > 0) {
 					zplString += `^XA ^MMT ^PW815 ^LL200 ^LS2`;
-			
+
 					for (let j = 0; j < lastRawLabelQuantity; j++) {
 						const currentBarcode = selectedBarcodes[currentIndex++];
 						zplString += `
@@ -584,17 +611,16 @@ const Index: NextPage = () => {
 							^BY2,3,52^FT${43 + j * 264},145^BCN,,N,N
 							^FH\\^FD>;${currentBarcode}^FS
 							^FT${43 + j * 264},58^A0N,20,20^FH\\^CI28^FD${itemName}^FS^CI27
-							^FT${43 + j * 264},170^A0N,20,20^FH\\^CI28^FDItem Code : ${itemCode}^FS^CI27
+							^FT${43 + j * 264},170^A0N,20,20^FH\\^CI28^FD ${currentBarcode}^FS^CI27
 						`;
 					}
-			
+
 					zplString += `^PQ1,0,1,Y ^XZ`;
 				}
-			
+
 				// Send ZPL string to the selected device
 				selectedDevice.send(zplString, undefined, errorCallback);
 			}
-			
 		});
 	};
 	var errorCallback = function (errorMessage: any) {
@@ -631,8 +657,8 @@ const Index: NextPage = () => {
 								</div>
 							</CardTitle>
 							<CardBody isScrollable className='table-responsive'>
-							<table className='table  table-bordered border-primary table-hover text-center'>
-							<thead className={"table-dark border-primary"}>
+								<table className='table  table-bordered border-primary table-hover text-center'>
+									<thead className={'table-dark border-primary'}>
 										<tr>
 											<th>Date</th>
 											<th>Item Code</th>
@@ -762,10 +788,14 @@ const Index: NextPage = () => {
 																color='info'
 																onClick={() =>
 																	printLabels(
-																		'--',
+																		brand.cost,
 																		brand.code,
-																		brand.brand +' ' +brand.model,
-																		selectedBarcodes[brand.id] || [],
+																		brand.brand +
+																			' ' +
+																			brand.model,
+																		selectedBarcodes[
+																			brand.id
+																		] || [],
 																		brand.id,
 																	)
 																}>

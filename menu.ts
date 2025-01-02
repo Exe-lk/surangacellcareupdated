@@ -83,8 +83,15 @@ export const stockAccPagesMenu = {
 export const CashierPagesMenu = {
 	bill: {
 		id: 'bill',
-		text: 'Bill',
-		path: 'cashier/bill',
+		text: ' Accessory Bill',
+		path: 'cashier/accessory-bill',
+		icon: 'Description',
+		subMenu: null,
+	},
+	bill1: {
+		id: 'bill',
+		text: ' Display Bill',
+		path: 'cashier/display-bill',
 		icon: 'Description',
 		subMenu: null,
 	},
@@ -92,6 +99,13 @@ export const CashierPagesMenu = {
 		id: 'stock',
 		text: 'Repaired Phone',
 		path: 'cashier/rapaired-phone',
+		icon: 'AutoStories',
+		subMenu: null,
+	},
+	Print: {
+		id: 'print',
+		text: 'print',
+		path: 'cashier/print',
 		icon: 'AutoStories',
 		subMenu: null,
 	},
