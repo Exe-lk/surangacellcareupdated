@@ -6,6 +6,7 @@ import {
 	pageLayoutTypesPagesMenu,
 } from '../menu';
 import AdminHeader from '../pages/_layout/_headers/AdminHeader';
+import CasierHeader from '../pages/_layout/_headers/CashierHeader';
 import path from 'path';
 
 
@@ -20,10 +21,11 @@ const headers = [
 		path: `/admin/*`,
 		element: <AdminHeader />,
 	},
-	{
-		path: `/cashier/*`,
-		element: <AdminHeader />,
-	},
+	// {
+	// 	path: `/cashier/*`,
+	// 	element: <CasierHeader />,
+
+	// },
 	{
 		path: `/display-stock/*`,
 		element: <AdminHeader />,

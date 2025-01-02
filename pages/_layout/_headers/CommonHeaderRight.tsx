@@ -53,7 +53,8 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 	//get stock count
 
 	return (
-		<HeaderRight>
+		// <HeaderRight>
+		<>
 			<div className='row g-3'>
 				{beforeChildren}
 
@@ -113,7 +114,8 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 					</Alert>
 				</OffCanvasBody>
 			</OffCanvas>
-		</HeaderRight>
+		
+		</>
 	);
 };
 CommonHeaderRight.propTypes = {
